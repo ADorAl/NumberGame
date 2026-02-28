@@ -83,52 +83,54 @@ fun GameScreen(navController: NavController, difficulty: Int, context: Context) 
                         else -> ButtonDefaults.buttonColors()
                     }
 
-                    Button(
-                        onClick = {
-                            if (value == currentNumber) {
-                                numbers = numbers.toMutableList().also { it[index] = -1 }
-                                currentNumber++
-
-                                if (currentNumber > totalCount) {
-                                    val elapsed = (System.currentTimeMillis() - startTime) / 1000.0
-                                    navController.navigate("success/$difficulty?time=$elapsed")
-                                }
-                            } else {
-                                wrongIndex = index
-                                missCount++
-                                if (missCount >= maxLives) {
-                                    navController.navigate("fail/$difficulty")
-                                }
-                            }
-                        },
+                    Box(
                         modifier = Modifier
                             .size(cellSizeDp)
-                            .padding(1.dp),
-                        colors = buttonColor,
-                        shape = RoundedCornerShape(0.dp) // ✅ 네모 모양 강제
+                            .padding(1.dp)
                     ) {
-                        if (value != -1) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center // ✅ 버튼 안에서 중앙 정렬
-                            ) {
-                                Text(
-                                    "$value",
-                                    fontSize = fontSize,
-                                    maxLines = 1,
-                                    softWrap = false,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth() // ✅ 버튼 중앙에만 배치
-                                )
+                        // 버튼 자체
+                        Button(
+                            onClick = {
+                                if (value == currentNumber) {
+                                    numbers = numbers.toMutableList().also { it[index] = -1 }
+                                    currentNumber++
 
-                            }
+                                    if (currentNumber > totalCount) {
+                                        val elapsed = (System.currentTimeMillis() - startTime) / 1000.0
+                                        navController.navigate("success/$difficulty?time=$elapsed")
+                                    }
+                                } else {
+                                    wrongIndex = index
+                                    missCount++
+                                    if (missCount >= maxLives) {
+                                        navController.navigate("fail/$difficulty")
+                                    }
+                                }
+                            },
+                            modifier = Modifier.matchParentSize(), // ✅ 버튼이 Box 전체 차지
+                            colors = buttonColor,
+                            shape = RoundedCornerShape(0.dp) // ✅ 네모 모양 강제
+                        ) { }
+
+                        // 버튼 위에 텍스트 겹치기
+                        if (value != -1) {
+                            Text(
+                                "$value",
+                                fontSize = fontSize,
+                                maxLines = 1,
+                                softWrap = false,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.align(Alignment.Center) // ✅ Box 안에서 중앙 배치
+                            )
                         }
+                    }
+
                     }
 
                 }
             }
         }
-    }
+
 
     // 틀린 버튼 깜빡임 처리
     LaunchedEffect(wrongIndex) {
