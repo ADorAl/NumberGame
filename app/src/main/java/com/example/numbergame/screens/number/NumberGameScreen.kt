@@ -1,6 +1,5 @@
 package com.example.numbergame.screens.number
 
-import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,7 +19,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 
 @Composable
-fun GameScreen(navController: NavController, difficulty: Int) {
+fun NumberGameScreen(navController: NavController, difficulty: Int) {
     val gridSize = difficulty + 2
     val totalCount = gridSize * gridSize
 
@@ -97,7 +96,9 @@ fun GameScreen(navController: NavController, difficulty: Int) {
 
                                     if (currentNumber > totalCount) {
                                         val elapsed = (System.currentTimeMillis() - startTime) / 1000.0
-                                        navController.navigate("success/$difficulty?time=$elapsed")
+                                        navController.navigate(
+                                            "number_success/$difficulty/$elapsedSeconds"
+                                        )
                                     }
                                 } else {
                                     wrongIndex = index

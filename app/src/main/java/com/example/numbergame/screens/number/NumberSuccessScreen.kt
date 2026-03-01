@@ -1,4 +1,4 @@
-package com.example.numbergame.screens.card
+package com.example.numbergame.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -15,24 +15,23 @@ import com.example.numbergame.data.saveRecord
 import kotlin.math.abs
 
 @Composable
-fun CardSuccessScreen(
+fun NumberSuccessScreen(
     navController: NavController,
     difficulty: Int,
-    usedTime: Int
+    elapsedTime: Double?
 ) {
 
-    val context = LocalContext.current
+    val context = LocalContext.current   // ✅ 여기서 가져오기
+
     val records = remember { mutableStateListOf<Double>() }
 
-    val usedTimeDouble = usedTime.toDouble()
-
-    // 🔥 카드 전용으로 저장 (key 수정 필요)
-    LaunchedEffect(usedTime) {
-        saveRecord(context, difficulty + 100, usedTimeDouble)
-        records.clear()
-        records.addAll(
-            getRecords(context, difficulty + 100)
-        )
+    // 🔹 새로운 기록 저장 + 최신화
+    LaunchedEffect(elapsedTime) {
+        if (elapsedTime != null) {
+            saveRecord(context, difficulty, elapsedTime)
+            records.clear()
+            records.addAll(getRecords(context, difficulty))
+        }
     }
 
     val bestScore = records.minOrNull()
@@ -46,7 +45,9 @@ fun CardSuccessScreen(
     ) {
 
         Text(
-            "🎉 성공! (이번 기록: ${usedTime}초)",
+            "🎉 성공! (이번 기록: ${
+                elapsedTime?.let { String.format("%.3f", it) } ?: "-"
+            }초)",
             fontSize = 24.sp
         )
 
@@ -54,7 +55,7 @@ fun CardSuccessScreen(
 
         bestScore?.let {
             Text(
-                "Best Score: ${String.format("%.0f", it)}초",
+                "Best Score: ${String.format("%.3f", it)}초",
                 fontSize = 20.sp
             )
         }
@@ -65,12 +66,13 @@ fun CardSuccessScreen(
 
         records.forEachIndexed { index, time ->
 
-            val isNew =
-                abs(time - usedTimeDouble) < 0.001
+            val isNew = elapsedTime?.let {
+                abs(it - time) < 0.001
+            } ?: false
 
             Text(
                 "${index + 1}등: ${
-                    String.format("%.0f", time)
+                    String.format("%.3f", time)
                 }초 ${if (isNew) "NEW!" else ""}"
             )
         }
@@ -78,9 +80,7 @@ fun CardSuccessScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = {
-                navController.navigate("difficulty/card")
-            },
+            onClick = { navController.navigate("difficulty/number") },
             modifier = Modifier.fillMaxWidth(0.6f)
         ) {
             Text("난이도 선택으로")
@@ -88,11 +88,10 @@ fun CardSuccessScreen(
 
         if (difficulty < 4) {
             Spacer(modifier = Modifier.height(16.dp))
+
             Button(
                 onClick = {
-                    navController.navigate(
-                        "game/card/${difficulty + 1}"
-                    )
+                    navController.navigate("game/number/${difficulty + 1}")
                 },
                 modifier = Modifier.fillMaxWidth(0.6f)
             ) {

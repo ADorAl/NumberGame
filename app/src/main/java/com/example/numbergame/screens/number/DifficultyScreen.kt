@@ -1,4 +1,4 @@
-package com.example.numbergame.screens
+package com.example.numbergame.screens.number
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,16 +17,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @Composable
-fun DifficultyScreen(navController: NavController) {
+fun DifficultyScreen(navController: NavController, gameType: String) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
+
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Button(
             onClick = { navController.navigate("main") }, // ✅ MainScreen으로 이동
             modifier = Modifier.padding(16.dp)
@@ -39,7 +45,9 @@ fun DifficultyScreen(navController: NavController) {
 
         for (i in 1..4) {
             Button(
-                onClick = { navController.navigate("game/$i") },
+                onClick = {
+                    navController.navigate("game/$gameType/$i")
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.6f)
                     .padding(vertical = 8.dp),

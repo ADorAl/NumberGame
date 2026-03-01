@@ -1,4 +1,4 @@
-package com.example.numbergame.screens
+package com.example.numbergame.screens.number
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
