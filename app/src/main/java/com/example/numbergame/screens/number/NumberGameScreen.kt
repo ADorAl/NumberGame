@@ -1,4 +1,4 @@
-package com.example.numbergame.screens
+package com.example.numbergame.screens.number
 
 import android.content.Context
 import androidx.compose.foundation.layout.*
@@ -20,7 +20,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.delay
 
 @Composable
-fun GameScreen(navController: NavController, difficulty: Int, context: Context) {
+fun GameScreen(navController: NavController, difficulty: Int) {
     val gridSize = difficulty + 2
     val totalCount = gridSize * gridSize
 
