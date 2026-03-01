@@ -120,6 +120,7 @@ fun GameScreen(navController: NavController, difficulty: Int, context: Context) 
                                 maxLines = 1,
                                 softWrap = false,
                                 textAlign = TextAlign.Center,
+                                color = Color.White, // ✅ 글자 색을 흰색으로 변경
                                 modifier = Modifier.align(Alignment.Center) // ✅ Box 안에서 중앙 배치
                             )
                         }

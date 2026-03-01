@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.numbergame.data.getRecords
 import com.example.numbergame.data.saveRecord
+import kotlin.compareTo
 
 
 @Composable
@@ -47,16 +51,16 @@ fun SuccessScreen(
     val bestScore = records.minOrNull()
 
     Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
+        verticalArrangement = Arrangement.Center
     ) {
-        Text("성공! (이번 기록: ${elapsedTime?.let { String.format("%.3f", it) } ?: "-"}초)")
+        Text("🎉 성공! (이번 기록: ${elapsedTime?.let { String.format("%.3f", it) } ?: "-" }초)", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
+        bestScore?.let { Text("Best Score: ${String.format("%.3f", it)}초", fontSize = 20.sp) }
 
-        bestScore?.let {
-            Text("Best Score: ${String.format("%.3f", it)}초")
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
         Text("Top 10 기록:")
@@ -65,13 +69,13 @@ fun SuccessScreen(
             Text("${index + 1}등: ${String.format("%.3f", time)}초 ${if (isNew) "new!" else ""}")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("difficulty") }) {
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = { navController.navigate("difficulty") }, modifier = Modifier.fillMaxWidth(0.6f)) {
             Text("난이도 선택으로")
         }
-
         if (difficulty < 4) {
-            Button(onClick = { navController.navigate("game/${difficulty + 1}") }) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { navController.navigate("game/${difficulty + 1}") }, modifier = Modifier.fillMaxWidth(0.6f)) {
                 Text("다음 난이도")
             }
         }

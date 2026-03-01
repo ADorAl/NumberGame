@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -107,8 +108,9 @@ fun HintGameScreen(navController: NavController, difficulty: Int) {
                                     wrongIndex = index
                                 }
                             },
-                            modifier = Modifier.fillMaxSize(),
-                            colors = buttonColor
+                            modifier = Modifier.matchParentSize(), // ✅ 버튼이 Box 전체 차지
+                            colors = buttonColor,
+                            shape = RoundedCornerShape(0.dp) // ✅ 네모 모양 강제
                         ) {
                             if (value != -1) {
                                 Text(
