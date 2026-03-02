@@ -36,7 +36,7 @@ object RecordManager {
         val key = keyForDifficulty(gameType, operation, difficulty)
         context.dataStore.edit { prefs ->
             val currentBest = prefs[key]
-            if (currentBest == null || newTime < currentBest) {
+            if (currentBest == null || newTime > currentBest) {
                 prefs[key] = newTime
             }
         }

@@ -20,7 +20,7 @@ fun RecordScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var selectedTab by remember { mutableStateOf("number") } // 숫자, 카드, 사칙연산
+    var selectedTab by remember { mutableStateOf("number") } // 숫자, 카드, 사칙연산, 반응속도
     var selectedOperation by remember { mutableStateOf<String?>(null) } // 사칙연산 연산 선택
 
     // 게임별 최대 난이도 정의
@@ -28,7 +28,7 @@ fun RecordScreen(navController: NavController) {
         "number" -> 4
         "card" -> 4
         "four_basic" -> 3
-        else -> 2
+        else -> 1 // reaction 포함
     }
     val difficulties = (1..maxDifficulty).toList()
 
@@ -45,7 +45,12 @@ fun RecordScreen(navController: NavController) {
 
         // 🔹 게임 탭
         Row(modifier = Modifier.fillMaxWidth()) {
-            listOf("number" to "숫자 맞히기", "card" to "카드 맞히기", "four_basic" to "사칙연산").forEach { (type, label) ->
+            listOf(
+                "number" to "숫자 맞히기",
+                "card" to "카드 맞히기",
+                "four_basic" to "사칙연산",
+                "reaction" to "반응 속도"
+            ).forEach { (type, label) ->
                 Button(
                     onClick = {
                         selectedTab = type
@@ -73,7 +78,8 @@ fun RecordScreen(navController: NavController) {
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (selectedOperation == op)
                                 MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.secondary
+                            else
+                                MaterialTheme.colorScheme.secondary
                         )
                     ) { Text(op, fontSize = 20.sp) }
                 }
@@ -82,19 +88,38 @@ fun RecordScreen(navController: NavController) {
         }
 
         // 🔹 난이도별 기록 표시
-        difficulties.forEach { difficulty ->
-            val recordFlow = if (selectedTab == "four_basic" && selectedOperation != null) {
-                RecordManager.getRecord(context, selectedTab, difficulty, selectedOperation)
-            } else {
-                RecordManager.getRecord(context, selectedTab, difficulty)
-            }
+        if (selectedTab == "reaction") {
+            // 반응속도는 난이도 구분 없이 최고 기록만 표시
+            val recordFlow = RecordManager.getRecord(context, "reaction", 0)
             val record by recordFlow.collectAsState(initial = null)
 
-            Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            Card(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text("난이도 $difficulty")
+                    Text("반응 속도 테스트")
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(record?.let { "최고 기록: ${it}초" } ?: "기록 없음")
+                }
+            }
+        } else {
+            // 기존 코드: 숫자/카드/사칙연산
+            difficulties.forEach { difficulty ->
+                val recordFlow = if (selectedTab == "four_basic" && selectedOperation != null) {
+                    RecordManager.getRecord(context, selectedTab, difficulty, selectedOperation)
+                } else {
+                    RecordManager.getRecord(context, selectedTab, difficulty)
+                }
+                val record by recordFlow.collectAsState(initial = null)
+
+                Card(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("난이도 $difficulty")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(record?.let { "최고 기록: ${it}초" } ?: "기록 없음")
+                    }
                 }
             }
         }
