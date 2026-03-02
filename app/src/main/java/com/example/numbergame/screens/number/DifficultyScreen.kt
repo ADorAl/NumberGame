@@ -40,6 +40,13 @@ fun DifficultyScreen(navController: NavController, gameType: String) {
         Text("메인으로 돌아가기")
         }
 
+        Button(
+            onClick = { navController.navigate("hint")}, //HintDifficultyScreen으로 이동
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text("힌트게임모드 가기")
+        }
+
         Text("난이도를 선택하세요", fontSize = 24.sp, color = Color(0xFF2E2E2E))
         Spacer(modifier = Modifier.height(24.dp))
 

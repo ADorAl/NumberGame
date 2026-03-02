@@ -27,11 +27,11 @@ fun FailScreen(navController: NavController, difficulty: Int) {
     ) {
         Text("❌ 실패했습니다!", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("difficulty") }, modifier = Modifier.fillMaxWidth(0.6f)) {
+        Button(onClick = { navController.navigate("difficulty/number")  }, modifier = Modifier.fillMaxWidth(0.6f)) {
             Text("난이도 선택으로")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("game/$difficulty") }, modifier = Modifier.fillMaxWidth(0.6f)) {
+        Button(onClick = { navController.navigate("game/number/$difficulty") }, modifier = Modifier.fillMaxWidth(0.6f)) {
             Text("다시 시도")
         }
     }

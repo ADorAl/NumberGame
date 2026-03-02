@@ -19,16 +19,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.numbergame.data.RecordManager
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun HintGameScreen(navController: NavController, difficulty: Int) {
@@ -41,6 +45,7 @@ fun HintGameScreen(navController: NavController, difficulty: Int) {
 
     val startTime = remember { System.currentTimeMillis() }
     var elapsedSeconds by remember { mutableStateOf(0.0) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -61,12 +66,9 @@ fun HintGameScreen(navController: NavController, difficulty: Int) {
 
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val density = LocalDensity.current
-            val cellSizePx = minOf(
-                constraints.maxWidth / gridSize,
-                constraints.maxHeight / gridSize
-            )
+            val cellSizePx = minOf(constraints.maxWidth / gridSize, constraints.maxHeight / gridSize)
             val cellSizeDp = with(density) { cellSizePx.toDp() }
-            val fontSize = (cellSizePx / 5).sp
+            val fontSize = (cellSizePx / 8).sp // 버튼 크기에 비례한 글자 크기
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(gridSize),
@@ -76,24 +78,18 @@ fun HintGameScreen(navController: NavController, difficulty: Int) {
                 items(numbers.size) { index ->
                     val value = numbers[index]
 
+                    val buttonColor = when {
+                        value == -1 -> ButtonDefaults.buttonColors(containerColor = Color.Green)
+                        wrongIndex == index -> ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        else -> ButtonDefaults.buttonColors()
+                    }
+
                     Box(
                         modifier = Modifier
                             .size(cellSizeDp)
-                            .padding(2.dp)
+                            .padding(1.dp)
                     ) {
-                        val buttonColor = when {
-                            value == currentNumber -> ButtonDefaults.buttonColors(
-                                containerColor = Color.Green
-                            )
-                            value == -1 -> ButtonDefaults.buttonColors(
-                                containerColor = Color.Gray
-                            )
-                            wrongIndex == index -> ButtonDefaults.buttonColors(
-                                containerColor = Color.Red
-                            )
-                            else -> ButtonDefaults.buttonColors()
-                        }
-
+                        // 버튼 자체
                         Button(
                             onClick = {
                                 if (value == currentNumber) {
@@ -102,30 +98,40 @@ fun HintGameScreen(navController: NavController, difficulty: Int) {
 
                                     if (currentNumber > totalCount) {
                                         val elapsed = (System.currentTimeMillis() - startTime) / 1000.0
-                                        navController.navigate("hintSuccess?time=$elapsed")
+                                        scope.launch {
+                                            RecordManager.saveRecord(
+                                                navController.context,
+                                                "number",
+                                                difficulty,
+                                                elapsed.toInt()
+                                            )
+                                        }
+                                        navController.navigate(
+                                            "number_success/$difficulty/$elapsedSeconds"
+                                        )
                                     }
-                                } else {
-                                    wrongIndex = index
                                 }
                             },
                             modifier = Modifier.matchParentSize(), // ✅ 버튼이 Box 전체 차지
                             colors = buttonColor,
-                            shape = RoundedCornerShape(0.dp) // ✅ 네모 모양 강제
-                        ) {
-                            if (value != -1) {
-                                Text(
-                                    "$value",
-                                    fontSize = fontSize,
-                                    maxLines = 1,
-                                    softWrap = false,
-                                    overflow = TextOverflow.Clip
-                                )
-                            }
-                        }
+                            shape = RoundedCornerShape(0.dp)
+                        ) {}
 
+                        // 버튼 위에 텍스트 겹치기
+                        if (value != -1) {
+                            Text(
+                                "$value",
+                                fontSize = fontSize,
+                                maxLines = 1,
+                                softWrap = false,
+                                textAlign = TextAlign.Center,
+                                color = Color.White,
+                                modifier = Modifier.align(Alignment.Center) // Box 안 중앙
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
+    }

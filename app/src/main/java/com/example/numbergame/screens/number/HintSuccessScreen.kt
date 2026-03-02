@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun HintSuccessScreen(navController: NavController, elapsedTime: Double) {
+fun HintSuccessScreen(navController: NavController, difficulty: Int,elapsedTime: Double?) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
