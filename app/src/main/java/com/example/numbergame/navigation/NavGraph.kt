@@ -9,6 +9,7 @@ import com.example.numbergame.screens.number.FailScreen
 import com.example.numbergame.screens.card.CardFailScreen
 import com.example.numbergame.screens.card.CardGameScreen
 import com.example.numbergame.screens.card.CardSuccessScreen
+import com.example.numbergame.screens.fourbasic.FourBasicOperationScreen
 import com.example.numbergame.screens.main.MainScreen
 import com.example.numbergame.screens.number.DifficultyScreen
 import com.example.numbergame.screens.number.HintDifficultyScreen
@@ -147,5 +148,16 @@ fun NavGraph() {
         }
 
 
+        composable(
+            route = "four_basic_operation/{operation}/{difficulty}",
+            arguments = listOf(
+                navArgument("operation") { type = NavType.StringType },
+                navArgument("difficulty") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val operation = backStackEntry.arguments?.getString("operation") ?: "+"
+            val difficulty = backStackEntry.arguments?.getInt("difficulty") ?: 1
+            FourBasicOperationScreen(navController, operation, difficulty)
+        }
     }
 }
