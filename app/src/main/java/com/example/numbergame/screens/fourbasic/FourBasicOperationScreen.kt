@@ -81,6 +81,78 @@ fun FourBasicOperationScreen(
 data class Problem(val question: String, val answer: Int)
 
 fun generateProblem(operation: String, difficulty: Int): Problem {
-    // TODO: 난이도별 조건 + 사칙연산 로직 구현
-    return Problem("1 + 1 = ?", 2)
+    val count = difficulty
+    var question = ""
+    var answer = 0
+
+    repeat(count) { i ->
+        when (operation) {
+            "+", "-", "×" -> {
+                val (a, b) = when (difficulty) {
+                    1 -> (0..10).random() to (0..10).random()
+                    2 -> (0..50).random() to (0..50).random()
+                    3 -> (0..100).random() to (0..100).random()
+                    else -> 1 to 1
+                }
+
+                if (i == 0) {
+                    answer = when (operation) {
+                        "+" -> a + b
+                        "-" -> a - b
+                        "×" -> a * b
+                        else -> a + b
+                    }
+                    question = when (operation) {
+                        "+" -> "$a + $b"
+                        "-" -> "$a - $b"
+                        "×" -> "$a × $b"
+                        else -> "$a + $b"
+                    }
+                } else {
+                    val newPart = when (operation) {
+                        "+" -> " + $b"
+                        "-" -> " - $b"
+                        "×" -> " × $b"
+                        else -> " + $b"
+                    }
+                    val newAnswer = when (operation) {
+                        "+" -> answer + b
+                        "-" -> answer - b
+                        "×" -> answer * b
+                        else -> answer + b
+                    }
+                    question += newPart
+                    answer = newAnswer
+                }
+            }
+            "÷" -> {
+                // 1단계이면 최종 answer를 먼저 결정
+                if (i == 0) {
+                    answer = when (difficulty) {
+                        1 -> (1..10).random()
+                        2 -> (2..20).random()
+                        3 -> (2..50).random()
+                        else -> 1
+                    }
+                    val divisor = when (difficulty) {
+                        1 -> (1..5).random()
+                        2 -> (2..10).random()
+                        3 -> (2..20).random()
+                        else -> 1
+                    }
+                    val dividend = answer * divisor
+                    question = "$dividend ÷ $divisor"
+                } else {
+                    // 두 번째 이후 단계: 이전 answer의 약수만 고르기
+                    val divisors = (1..answer).filter { answer % it == 0 }
+                    val divisor = divisors.random()
+                    val dividend = answer * divisor
+                    question += " ÷ $divisor"
+                    answer /= divisor
+                }
+            }
+        }
+    }
+
+    return Problem("$question = ?", answer)
 }

@@ -1,8 +1,6 @@
 package com.example.numbergame.screens.main
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +28,9 @@ fun MainScreen(navController: NavController) {
             .clickable(enabled = showFourOpButtons) { showFourOpButtons = false }
             .padding(24.dp)
     ) {
+        if (selectedOperation != null) {
+            Text("선택한 연산: $selectedOperation", fontSize = 24.sp, modifier = Modifier.padding(bottom = 16.dp))
+        }
         Column(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,7 +118,7 @@ fun MainScreen(navController: NavController) {
                             Button(
                                 onClick = {
                                     selectedOperation = opSymbol
-                                    navController.navigate("difficulty/four_basic/$opSymbol")
+                                    navController.navigate("four_basic_operation_difficulty/$opSymbol")
                                 },
                                 modifier = Modifier
                                     .weight(1f)

@@ -9,7 +9,10 @@ import com.example.numbergame.screens.number.FailScreen
 import com.example.numbergame.screens.card.CardFailScreen
 import com.example.numbergame.screens.card.CardGameScreen
 import com.example.numbergame.screens.card.CardSuccessScreen
+import com.example.numbergame.screens.fourbasic.FourBasicOperationDifficultyScreen
+import com.example.numbergame.screens.fourbasic.FourBasicOperationFailScreen
 import com.example.numbergame.screens.fourbasic.FourBasicOperationScreen
+import com.example.numbergame.screens.fourbasic.FourBasicOperationSuccessScreen
 import com.example.numbergame.screens.main.MainScreen
 import com.example.numbergame.screens.number.DifficultyScreen
 import com.example.numbergame.screens.number.HintDifficultyScreen
@@ -148,6 +151,18 @@ fun NavGraph() {
         }
 
 
+// 🔹 사칙연산 게임 난이도 선택 화면
+        composable(
+            route = "four_basic_operation_difficulty/{operation}",
+            arguments = listOf(
+                navArgument("operation") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val operation = backStackEntry.arguments?.getString("operation") ?: "+"
+            FourBasicOperationDifficultyScreen(navController, operation)
+        }
+
+// 🔹 사칙연산 문제 화면
         composable(
             route = "four_basic_operation/{operation}/{difficulty}",
             arguments = listOf(
@@ -158,6 +173,34 @@ fun NavGraph() {
             val operation = backStackEntry.arguments?.getString("operation") ?: "+"
             val difficulty = backStackEntry.arguments?.getInt("difficulty") ?: 1
             FourBasicOperationScreen(navController, operation, difficulty)
+        }
+
+        // 사칙연산 성공
+        composable(
+            route = "four_basic_operation_success/{operation}/{difficulty}/{usedTime}",
+            arguments = listOf(
+                navArgument("operation") { type = NavType.StringType },
+                navArgument("difficulty") { type = NavType.IntType },
+                navArgument("usedTime") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val operation = backStackEntry.arguments?.getString("operation") ?: "+"
+            val difficulty = backStackEntry.arguments?.getInt("difficulty") ?: 1
+            val usedTime = backStackEntry.arguments?.getInt("usedTime") ?: 0
+            FourBasicOperationSuccessScreen(navController, operation, difficulty, usedTime)
+        }
+
+// 사칙연산 실패
+        composable(
+            route = "four_basic_operation_fail/{operation}/{difficulty}",
+            arguments = listOf(
+                navArgument("operation") { type = NavType.StringType },
+                navArgument("difficulty") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val operation = backStackEntry.arguments?.getString("operation") ?: "+"
+            val difficulty = backStackEntry.arguments?.getInt("difficulty") ?: 1
+            FourBasicOperationFailScreen(navController, operation, difficulty)
         }
     }
 }
