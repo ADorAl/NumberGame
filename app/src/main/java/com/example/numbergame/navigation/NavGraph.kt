@@ -8,9 +8,9 @@ import com.example.numbergame.screens.NumberSuccessScreen
 import com.example.numbergame.screens.card.CardFailScreen
 import com.example.numbergame.screens.card.CardGameScreen
 import com.example.numbergame.screens.card.CardSuccessScreen
-import com.example.numbergame.screens.card.RecordScreen
 import com.example.numbergame.screens.main.MainScreen
 import com.example.numbergame.screens.number.*
+import com.example.numbergame.screens.record.RecordScreen
 
 @Composable
 fun NavGraph() {

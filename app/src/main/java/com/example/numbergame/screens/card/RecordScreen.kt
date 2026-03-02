@@ -1,4 +1,4 @@
-package com.example.numbergame.screens.card
+package com.example.numbergame.screens.record
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,7 +19,15 @@ fun RecordScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    val difficulties = listOf(1, 2, 3, 4)
+    var selectedTab by remember { mutableStateOf("number") } // 기본 탭: 숫자 맞히기
+
+    // 게임별 최대 난이도 정의 (동적 대응 가능)
+    val maxDifficulty = when (selectedTab) {
+        "number" -> 4   // 숫자 게임 난이도 1~4
+        "card" -> 4     // 카드 게임 난이도 1~4
+        else -> 2       // 다른 게임 기본값
+    }
+    val difficulties = (1..maxDifficulty).toList()
 
     Column(
         modifier = Modifier
@@ -30,14 +38,31 @@ fun RecordScreen(navController: NavController) {
     ) {
 
         Text("🏆 최고 기록", fontSize = 26.sp)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 🔹 탭 버튼
+        Row(modifier = Modifier.fillMaxWidth()) {
+            listOf("number" to "숫자 맞히기", "card" to "카드 맞히기").forEach { (type, label) ->
+                Button(
+                    onClick = { selectedTab = type },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (selectedTab == type)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.secondary
+                    ),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(label)
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // 🔹 난이도별 기록 표시
         difficulties.forEach { difficulty ->
-
-            val recordFlow =
-                RecordManager.getRecord(context, difficulty)
-
+            val recordFlow = RecordManager.getRecord(context, selectedTab, difficulty)
             val record by recordFlow.collectAsState(initial = null)
 
             Card(
@@ -46,21 +71,16 @@ fun RecordScreen(navController: NavController) {
                     .padding(vertical = 8.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-
                     Text("난이도 $difficulty")
-
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        record?.let { "최고 기록: ${it}초" }
-                            ?: "기록 없음"
-                    )
+                    Text(record?.let { "최고 기록: ${it}초" } ?: "기록 없음")
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // 🔹 초기화 버튼
         Button(onClick = {
             scope.launch {
                 RecordManager.resetAll(context)
@@ -71,10 +91,9 @@ fun RecordScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        // 🔹 메인 화면 버튼
         Button(onClick = {
-            navController.navigate("main") {
-                popUpTo("main") { inclusive = true }
-            }
+            navController.navigate("main") { popUpTo("main") { inclusive = true } }
         }) {
             Text("메인 화면")
         }
