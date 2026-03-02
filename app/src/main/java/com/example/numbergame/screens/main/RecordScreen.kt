@@ -25,6 +25,7 @@ fun RecordScreen(navController: NavController) {
     val maxDifficulty = when (selectedTab) {
         "number" -> 4   // 숫자 게임 난이도 1~4
         "card" -> 4     // 카드 게임 난이도 1~4
+
         else -> 2       // 다른 게임 기본값
     }
     val difficulties = (1..maxDifficulty).toList()
