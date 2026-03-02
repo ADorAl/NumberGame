@@ -3,9 +3,7 @@ package com.example.numbergame.screens.fourbasic
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +25,18 @@ fun FourBasicOperationDifficultyScreen(
             .background(Color(0xFF101820))
             .padding(24.dp)
     ) {
+
+        // 🔥 ⬅ 뒤로가기 버튼 (왼쪽 위)
+        Button(
+            onClick = { navController.popBackStack() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF263238)
+            ),
+            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.align(Alignment.TopStart)
+        ) {
+            Text("⬅ 뒤로가기", color = Color.White)
+        }
 
         Column(
             modifier = Modifier.align(Alignment.Center),
